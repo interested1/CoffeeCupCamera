@@ -100,30 +100,34 @@ void setup()
 void loop() 
 {
 
-  // create a new file each and every time
+    // create a new file each and every time
+    ResetFileName();
+  
+    WaitForTilt(YPIN);
+    
+    while (!CheckForReset(YPIN))
+    {
+      ResetFileName();
+      // take picture
+      capture_photo(myFileName);
+      delay(10);
+
+      FlashPin(2, OUTPUT_PIN_2);
+      delay(500);
+    }
+    
+    WaitForReset(YPIN);
+}
+
+/*******************************************************************************/
+int ResetFileName()
+{
   while (image_number != 0) 
   {
     sprintf(myFileName, "CC_%04d.jpg", image_number);
     if (SD.exists(myFileName) == false) break;
     image_number++;
   }
-  
-    // wait for button
-    //WaitForButton();
-
-    WaitForTilt(YPIN);
-    
-    while (!CheckForReset(YPIN))
-    {
-      
-      // take picture
-      capture_photo(myFileName);
-      delay(10);
-
-      FlashPin(2, OUTPUT_PIN_2);
-      delay(100);
-    }
-    //WaitForReset(YPIN);
 }
 
 /*******************************************************************************/
@@ -174,7 +178,7 @@ void FlashPin(int nooftimes, int pin)
 /*******************************************************************************/
 void WaitForTilt(int pin)
 {
-  while (ReadAxis(pin) < THRESHOLD_TILT)
+  while (ReadAxis(pin) > THRESHOLD_TILT)
   {
     delay(100);
   }
@@ -184,7 +188,7 @@ void WaitForTilt(int pin)
 /*******************************************************************************/
 void WaitForReset(int pin)
 {
-  while (ReadAxis(pin) > THRESHOLD_RESET)
+  while (ReadAxis(pin) < THRESHOLD_RESET)
   {
     delay(100);
   }
