@@ -55,7 +55,7 @@ uint32_t 	vc_frame_address =0;
 uint32_t 	last_data_length=0;
 
 // SD card stuff
-
+#include <SPI.h>
 #include <SD.h>
 File myFile;
 
